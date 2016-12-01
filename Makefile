@@ -5,8 +5,8 @@ OBJ = .
 LIST_SRC = $(SRC)/main.c $(SRC)/get_next_line.c
 
 LIST_OBJ = $(LIST_SRC:$(SRC)/%.c=$(OBJ)/%.o)
-CFLAG = -Wall -Wextra -Werror
-# CFLAG = -Wall -Wextra -Werror -g -O0
+#CFLAG = -Wall -Wextra -Werror
+CFLAG = -Wall -Wextra -Werror -g -O0
 LIBFT = libft.a
 LIBFTPATH = ./libft/
 INC_LIBFTPATH  = $(LIBFTPATH)

@@ -20,9 +20,10 @@ void 	print_buffer(char *line)
 	int i;
 
 	i = 0;
-	while ((i < BUFF_SIZE) && line[i])
+	while (line[i])
 	{
 		ft_putchar(line[i]);
+		i++;
 	}
 	ft_putchar('\n');
 }
@@ -33,7 +34,7 @@ void 	print_buffer(char *line)
 
 int		main(int ac, char *av[])
 {
-	char		**buf;
+	char		*buf;
 	int			fd;
 	int			ret;
 
@@ -42,21 +43,15 @@ int		main(int ac, char *av[])
 		ft_putstr("usage : ./get_next_line source_file\n");
 		return (1);
 	}
-	buf = malloc(sizeof(char *) * (BUFF_SIZE + 1));
-	if (buf == NULL)
-	{
-		ft_putstr("Erreur malloc\n");
-		return (1);
-	}
 	fd = open(av[1], O_RDONLY);
 	if (fd == -1)
 	{
 		ft_putstr("Erreur open\n");
 		return (1);
 	}
-	while ((ret = get_next_line(fd, buf)) == 1)
+	while ((ret = get_next_line(fd, &buf)) == 1)
 	{
-		print_buffer(*buf);
+		print_buffer(buf);
 	}
 	close(fd);
 	return (0);
