@@ -51,8 +51,13 @@ int		main(int ac, char *av[])
 	}
 	while ((ret = get_next_line(fd, &buf)) == 1)
 	{
+		ft_putstr("main : get_next_line a renvoye 1\n");
 		print_buffer(buf);
+		free(buf);
 	}
+	ft_putstr("main : get_next_line a renvoye \n");
+	ft_putnbr(ret);
+	ft_putstr("\n");
 	close(fd);
 	return (0);
 }
