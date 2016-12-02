@@ -1,6 +1,6 @@
 NAME = libft.a
 SRC = .
-INC = .
+INC = ./includes
 OBJ = .
 
 LIST_SRC = \

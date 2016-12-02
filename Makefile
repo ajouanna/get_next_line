@@ -9,7 +9,7 @@ LIST_OBJ = $(LIST_SRC:$(SRC)/%.c=$(OBJ)/%.o)
 CFLAG = -Wall -Wextra -Werror -g -O0
 LIBFT = libft.a
 LIBFTPATH = ./libft/
-INC_LIBFTPATH  = $(LIBFTPATH)
+INC_LIBFTPATH  = $(LIBFTPATH)includes
 
 all : $(NAME)
 
