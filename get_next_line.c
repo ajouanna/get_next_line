@@ -100,7 +100,7 @@ int		get_next_line(const int fd, char **line)
 		// ici, on sait qu'il faut lire a nouveau dans le fichier
 		pos_in_buffer = 0;
 		ret = get_next_line(fd, &subline);
-		if (ret > 0) 
+		if (ret == 1) 
 		{
 			line2 = ft_strjoin(*line, subline);
 			free(*line);
@@ -111,9 +111,12 @@ int		get_next_line(const int fd, char **line)
 				// ft_putstr("erreur de ft_strjoin\n");
 				return (-1);
 			}
+			return (1);
 		}
+		if (ret == 0)
+			ret = 1;
 		return (ret);
 
 	}
-	return (1);
+	return (0);
 }

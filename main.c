@@ -20,6 +20,7 @@ void 	print_buffer(char *line)
 	int i;
 
 	i = 0;
+	ft_putstr("print_buffer\n");
 	while (line[i])
 	{
 		ft_putchar(line[i]);
