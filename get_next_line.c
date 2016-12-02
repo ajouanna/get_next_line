@@ -16,40 +16,6 @@
 #include <stdlib.h>
 
 /*
-**  cree une nouvelle chaine etendue et libere la memoire de celle 
-** passee en parametre
-*/
-/*
-static char *extend_string(char *str, size_t size)
-{
-	char *res;
-	size_t i;
-	size_t len;
-
-	if (size == 0)
-		return str;
-	len = ft_strlen(str);
-	res = (char *)malloc(sizeof(char) * (len + size));
-	if (res)
-	{
-		i = 0;
-		while (i < len)
-		{
-			res[i] = str[i];
-			i++;
-		}
-		while (i < (len + size))
-		{
-			res[i] = 0;
-			i++;
-		}
-	}
-	free(str);
-	return res;
-}
-*/
-
-/*
 ** le principe de fonctionnement : je lis le fichier par blocs de taille
 ** BUFF_SIZE. Dans le buffer lu, je vais jusqu'au retour chariot. S'il n'y en a
 ** pas, je lis un nouveau bloc. S'il y en a, je garde dans une varable statique
@@ -128,8 +94,8 @@ int		get_next_line(const int fd, char **line)
 	pos_in_buffer = i + 1;
 	if (found_nl)
 		return (1);
-	//if (pos_in_buffer == res)
-	else
+	if (pos_in_buffer >= res)
+	// else
 	{
 		// ici, on sait qu'il faut lire a nouveau dans le fichier
 		pos_in_buffer = 0;
@@ -146,6 +112,8 @@ int		get_next_line(const int fd, char **line)
 				return (-1);
 			}
 		}
+		if (ret == 0)
+			return (1);
 		return (ret);
 
 	}
