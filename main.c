@@ -6,7 +6,7 @@
 /*   By: ajouanna <ajouanna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 13:49:11 by ajouanna          #+#    #+#             */
-/*   Updated: 2016/11/30 14:15:49 by ajouanna         ###   ########.fr       */
+/*   Updated: 2016/12/02 16:12:31 by ajouanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,11 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-void 	print_buffer(char *line)
+void	print_buffer(char *line)
 {
 	int i;
 
 	i = 0;
-	ft_putstr("print_buffer\n");
 	while (line[i])
 	{
 		ft_putchar(line[i]);
@@ -53,7 +52,6 @@ int		main(int ac, char *av[])
 	while ((ret = get_next_line(fd, &buf)) == 1)
 	{
 		print_buffer(buf);
-		// free(buf);
 	}
 	close(fd);
 	return (0);

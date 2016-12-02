@@ -6,7 +6,7 @@
 /*   By: ajouanna <ajouanna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 12:48:04 by ajouanna          #+#    #+#             */
-/*   Updated: 2016/11/30 14:02:38 by ajouanna         ###   ########.fr       */
+/*   Updated: 2016/12/02 15:55:57 by ajouanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,13 @@
 
 # define BUFF_SIZE 10
 
-int		get_next_line(const int fd, char **line);
+typedef struct	s_sbuf
+{
+	int		pos_in_buf;
+	char	buf[BUFF_SIZE + 1];
+	int		res;
+}				t_sbuf;
+
+int				get_next_line(const int fd, char **line);
 
 #endif
