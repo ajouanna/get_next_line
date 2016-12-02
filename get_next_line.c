@@ -64,13 +64,17 @@ int		get_next_line(const int fd, char **line)
 	int i;
 	int j;
 	char *subline;
+	char *line2;
 	int ret;
 	int found_nl;
 
+/*
 	ft_putstr("get_next_line : pos_in_buffer =");
 	ft_putnbr(pos_in_buffer);
+	ft_putstr(" res =");
+	ft_putnbr(res);
 	ft_putstr("\n");
-
+*/
 	found_nl = 0;
 	if (pos_in_buffer == 0)
 	{
@@ -82,7 +86,7 @@ int		get_next_line(const int fd, char **line)
 		}
 		if (res == 0)
 		{
-			ft_putstr("plus rien a lire\n");
+			// ft_putstr("plus rien a lire\n");
 			return (0);
 		}
 
@@ -90,8 +94,8 @@ int		get_next_line(const int fd, char **line)
 	}
 	else
 	{
-		if (pos_in_buffer == res)
-			return (0);
+//		if (pos_in_buffer == res)
+//			return (0);
 		i = pos_in_buffer;
 	}
 
@@ -99,16 +103,22 @@ int		get_next_line(const int fd, char **line)
 	{
 		if (buf[i] == '\n')
 		{
+		/*
+			ft_putstr("newline trouve pour i = ");
+			ft_putnbr(i);
+			ft_putstr("\n");
+			*/
 			found_nl = 1;
 			break;
 		}
 		i++;
 	}
-	*line = malloc(sizeof(char) * (i + 1));
+	*line = malloc(sizeof(char) * (i - pos_in_buffer + 1));
 	if (*line == NULL)
 		return (-1);
 	j = 0;
-	while (j <= i)
+	// ici, i vaut soit res, soit la position du \n
+	while (j < (i - pos_in_buffer))
 	{
 		(*line)[j] = buf[pos_in_buffer + j];
 		j++;
@@ -126,9 +136,10 @@ int		get_next_line(const int fd, char **line)
 		ret = get_next_line(fd, &subline);
 		if (ret > 0) 
 		{
-			*line = ft_strjoin(*line, subline);
-			ft_putstr("appel a ft_strjoin\n");
+			line2 = ft_strjoin(*line, subline);
+			free(*line);
 			free(subline);
+			*line = line2;
 			if (*line == NULL)
 			{
 				ft_putstr("erreur de ft_strjoin\n");
