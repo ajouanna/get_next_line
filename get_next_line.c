@@ -47,7 +47,7 @@ int		get_next_line(const int fd, char **line)
 		res = read(fd, buf, BUFF_SIZE);
 		if (res == -1)
 		{
-			ft_putstr("erreur de lecture\n");
+			// ft_putstr("erreur de lecture\n");
 			return (-1);
 		}
 		if (res == 0)
@@ -108,12 +108,10 @@ int		get_next_line(const int fd, char **line)
 			*line = line2;
 			if (*line == NULL)
 			{
-				ft_putstr("erreur de ft_strjoin\n");
+				// ft_putstr("erreur de ft_strjoin\n");
 				return (-1);
 			}
 		}
-		if (ret == 0)
-			return (1);
 		return (ret);
 
 	}
