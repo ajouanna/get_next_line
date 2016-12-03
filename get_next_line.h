@@ -17,6 +17,7 @@
 
 typedef struct	s_sbuf
 {
+	int		fd;
 	int		pos_in_buf;
 	char	buf[BUFF_SIZE + 1];
 }				t_sbuf;
