@@ -6,7 +6,7 @@
 /*   By: ajouanna <ajouanna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 13:49:11 by ajouanna          #+#    #+#             */
-/*   Updated: 2016/12/02 16:12:31 by ajouanna         ###   ########.fr       */
+/*   Updated: 2016/12/05 17:31:15 by ajouanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	print_buffer(char *line)
 	int i;
 
 	i = 0;
+	ft_putstr("print_buffer : ");
 	while (line[i])
 	{
 		ft_putchar(line[i]);

@@ -6,7 +6,7 @@
 /*   By: ajouanna <ajouanna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 14:04:19 by ajouanna          #+#    #+#             */
-/*   Updated: 2016/12/02 19:31:28 by ajouanna         ###   ########.fr       */
+/*   Updated: 2016/12/05 18:30:55 by ajouanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ t_list		*create_elem(const int fd)
 		return (NULL);
 	psbuf->fd = fd;
 	psbuf->pos_in_buf = 0;
-	elem = ft_lstnew(psbuf, 0);
+	elem = ft_lstnew(psbuf, sizeof(t_sbuf));
 	if (elem == NULL)
 		return (NULL);
 	return (elem);
@@ -37,19 +37,18 @@ t_list		*create_elem(const int fd)
 
 /*
 ** si la list chainee est vide, creer le 1er element
-** sinon chercher l'elment correspondant a fd
+** sinon chercher l'element correspondant a fd
 ** s'il n'existe pas, le creer
 */
 
 t_sbuf		*get_sbuf(const int fd)
 {
 	static t_list	*plist = NULL;
-	t_list		*pt;
-	t_sbuf		*psbuf;
+	t_list			*pt;
+	t_sbuf			*psbuf;
 
 	if (plist == NULL)
 	{
-		// premier passage
 		plist = create_elem(fd);
 		if (plist == NULL)
 			return (NULL);
@@ -63,8 +62,6 @@ t_sbuf		*get_sbuf(const int fd)
 			return (psbuf);
 		pt = pt->next;
 	}
-	// si j'arrive ici c'est que je n'ai pas trouve
-	// => creer l'element
 	pt = create_elem(fd);
 	if (pt == NULL)
 		return (NULL);
@@ -73,15 +70,14 @@ t_sbuf		*get_sbuf(const int fd)
 	return (psbuf);
 }
 
-
 /*
-** Alloue (avec malloc(3)) et retourne une chaine de caractères
+** Alloue (avec malloc(3)) et retourne une chaine de caractère
 ** “fraiche” terminée par un ’\0’ résultant de la concaténation
-** de s1 et s2, sur une longueur max de size.
+** de s1 et s2, sur une longueur max de size
 ** Si l’allocation echoue, la fonction renvoie NULL.
 */
 
-char	*ft_strnjoin(char const *s1, char const *s2, size_t size)
+char		*ft_strnjoin(char const *s1, char const *s2, size_t size)
 {
 	char	*res;
 	size_t	i;
@@ -110,17 +106,17 @@ char	*ft_strnjoin(char const *s1, char const *s2, size_t size)
 }
 
 /*
-** cherche un /n dans buf et copie la sous-chaine de buf 
+** cherche un /n dans buf et copie la sous-chaine de buf
 ** dans line
 ** Egalement, positionne pos_in_buf apres \n
 ** Renvoie 1 si \n a ete trouve, 0 si non, -1 en cas d'erreur
 */
 
-int		join(char **line, t_sbuf *sbuf)
+int			join(char **line, t_sbuf *sbuf)
 {
 	char	*pos_nl;
 	char	*joined;
-	int	len;
+	int		len;
 
 	if ((pos_nl = ft_strchr(sbuf->buf + sbuf->pos_in_buf, '\n')) != NULL)
 	{
@@ -128,7 +124,9 @@ int		join(char **line, t_sbuf *sbuf)
 		joined = ft_strnjoin(*line, sbuf->buf + sbuf->pos_in_buf, len);
 		if (joined == NULL)
 			return (-1);
-		sbuf->pos_in_buf = len + 1;
+		sbuf->pos_in_buf += len + 1;
+		if (sbuf->pos_in_buf >= (int)ft_strlen(sbuf->buf))
+			sbuf->pos_in_buf = 0;
 		free(*line);
 		*line = joined;
 		return (1);
@@ -145,39 +143,33 @@ int		join(char **line, t_sbuf *sbuf)
 /*
 ** le principe de fonctionnement : je lis le fichier par blocs de taille
 ** BUFF_SIZE. Dans le buffer lu, je vais jusqu'au retour chariot. S'il n'y en a
-** pas, je lis un nouveau bloc. S'il y en a, je garde dans une varable statique
-** ou j'en suis, pour la prochaine lecture
+** pas, je lis en boucle un nouveau bloc.
+** Entre 2 appels a get_next_line, les infos sont stockees dans un t_sbuf
 */
 
-int		get_next_line(const int fd, char **line)
+int			get_next_line(const int fd, char **line)
 {
 	t_sbuf	*sbuf;
-	int	res;
+	int		res;
+	int		resjoin;
 
-	sbuf = get_sbuf(fd);
-	if (sbuf == NULL)
+	if ((sbuf = get_sbuf(fd)) == NULL)
 		return (-1);
 	if (sbuf->pos_in_buf == 0)
 	{
-		res = read(fd, sbuf->buf, BUFF_SIZE);
-		if (res == -1)
-			return (-1);
-		if (res == 0)
-			return (0);
+		if ((res = read(fd, sbuf->buf, BUFF_SIZE)) == -1 || res == 0)
+			return (res);
 		sbuf->buf[res] = 0;
 	}
-	if ((*line = malloc(sizeof(char) * (1))) == NULL)
+	if ((*line = ft_memalloc(sizeof(char) * (1))) == NULL)
 		return (-1);
-	(*line)[0] = 0;
-	if ((res = join(line, sbuf))) // cas 1 ou -1
+	if ((res = join(line, sbuf)))
 		return (res);
-	sbuf->pos_in_buf = 0;
 	while ((res = read(fd, sbuf->buf, BUFF_SIZE) > 0))
 	{
-		if ((res = join(line, sbuf)) == 1)
-			return (1);
-		if (res == -1)
-			return (-1);
+		sbuf->buf[res] = 0;
+		if ((resjoin = join(line, sbuf)) != 0)
+			return (resjoin);
 	}
-	return (res);
+	return ((res == 0) ? 1 : res);
 }
