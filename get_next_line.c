@@ -6,7 +6,7 @@
 /*   By: ajouanna <ajouanna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 14:04:19 by ajouanna          #+#    #+#             */
-/*   Updated: 2016/12/07 12:03:09 by ajouanna         ###   ########.fr       */
+/*   Updated: 2016/12/07 17:31:48 by ajouanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 
 /*
 ** creer un element de liste chainee contenant fd
+** Remarque : ne pas oublier de liberer psbuf car ft_lstnew fait une copie
+** profonde
 */
 
 t_list		*create_elem(const int fd)
@@ -30,6 +32,7 @@ t_list		*create_elem(const int fd)
 	psbuf->fd = fd;
 	psbuf->pos_in_buf = 0;
 	elem = ft_lstnew(psbuf, sizeof(t_sbuf));
+	free(psbuf);
 	if (elem == NULL)
 		return (NULL);
 	return (elem);
@@ -41,20 +44,19 @@ t_list		*create_elem(const int fd)
 ** s'il n'existe pas, le creer
 */
 
-t_sbuf		*get_sbuf(const int fd)
+t_sbuf		*get_sbuf(const int fd, t_list **pplist)
 {
-	static t_list	*plist = NULL;
 	t_list			*pt;
 	t_sbuf			*psbuf;
 
-	if (plist == NULL)
+	if (*pplist == NULL)
 	{
-		plist = create_elem(fd);
-		if (plist == NULL)
+		*pplist = create_elem(fd);
+		if (*pplist == NULL)
 			return (NULL);
-		return (plist->content);
+		return ((*pplist)->content);
 	}
-	pt = plist;
+	pt = *pplist;
 	while (pt)
 	{
 		psbuf = pt->content;
@@ -62,47 +64,11 @@ t_sbuf		*get_sbuf(const int fd)
 			return (psbuf);
 		pt = pt->next;
 	}
-	pt = create_elem(fd);
-	if (pt == NULL)
+	if ((pt = create_elem(fd)) == NULL)
 		return (NULL);
 	psbuf = pt->content;
-	ft_lstadd(&plist, pt);
+	ft_lstadd(pplist, pt);
 	return (psbuf);
-}
-
-/*
-** Alloue (avec malloc(3)) et retourne une chaine de caractère
-** “fraiche” terminée par un ’\0’ résultant de la concaténation
-** de s1 et s2, sur une longueur max de size
-** Si l’allocation echoue, la fonction renvoie NULL.
-*/
-
-char		*ft_strnjoin(char const *s1, char const *s2, size_t size)
-{
-	char	*res;
-	size_t	i;
-	size_t	j;
-
-	if (!s1 || !s2)
-		return (NULL);
-	if ((res = (char *)malloc(sizeof(char) *
-		(ft_strlen(s1) + size + 1))) == NULL)
-		return (NULL);
-	i = 0;
-	while (s1[i])
-	{
-		res[i] = s1[i];
-		i++;
-	}
-	j = i;
-	i = 0;
-	while (s2[i] && i < size)
-	{
-		res[i + j] = s2[i];
-		i++;
-	}
-	res[i + j] = 0;
-	return (res);
 }
 
 /*
@@ -141,6 +107,27 @@ int			join(char **line, t_sbuf *sbuf)
 }
 
 /*
+** Lit dans un fichier en terminant la chaine lue par un 0.
+** En cas d'erreur ou de fin de fichier, repositionne le buffer a 0
+** pour le cas ou on rappellerai get_next_line avec un fd deja utilise
+** Renvoit le code d'erreur de read
+*/
+
+int			read_in_elem(t_sbuf *sbuf)
+{
+	int			res;
+
+	res = read(sbuf->fd, sbuf->buf, BUFF_SIZE);
+	if (res > 0)
+	{
+		sbuf->buf[res] = 0;
+		return (res);
+	}
+	sbuf->pos_in_buf = 0;
+	return (res);
+}
+
+/*
 ** le principe de fonctionnement : je lis le fichier par blocs de taille
 ** BUFF_SIZE. Dans le buffer lu, je vais jusqu'au retour chariot. S'il n'y en a
 ** pas, je lis en boucle un nouveau bloc.
@@ -149,25 +136,24 @@ int			join(char **line, t_sbuf *sbuf)
 
 int			get_next_line(const int fd, char **line)
 {
-	t_sbuf	*sbuf;
-	int		res;
-	int		resjoin;
+	static t_list	*plist = NULL;
+	t_sbuf			*sbuf;
+	int				res;
+	int				resjoin;
 
-	if ((sbuf = get_sbuf(fd)) == NULL)
+	if ((sbuf = get_sbuf(fd, &plist)) == NULL)
 		return (-1);
 	if (sbuf->pos_in_buf == 0)
 	{
-		if ((res = read(fd, sbuf->buf, BUFF_SIZE)) == -1 || res == 0)
+		if ((res = read_in_elem(sbuf)) == -1 || res == 0)
 			return (res);
-		sbuf->buf[res] = 0;
 	}
 	if ((*line = ft_memalloc(sizeof(char) * (1))) == NULL)
 		return (-1);
 	if ((res = join(line, sbuf)))
 		return (res);
-	while ((res = read(fd, sbuf->buf, BUFF_SIZE)) > 0)
+	while ((res = read_in_elem(sbuf)) > 0)
 	{
-		sbuf->buf[res] = 0;
 		if ((resjoin = join(line, sbuf)) != 0)
 			return (resjoin);
 	}

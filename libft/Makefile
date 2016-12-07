@@ -62,6 +62,7 @@ LIST_SRC = \
 		$(SRC)/ft_lstadd.c \
 		$(SRC)/ft_lstiter.c \
 		$(SRC)/ft_lstmap.c \
+		$(SRC)/ft_strnjoin.c \
 		$(SRC)/ft_isspace.c
 
 
