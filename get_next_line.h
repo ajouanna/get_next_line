@@ -6,14 +6,14 @@
 /*   By: ajouanna <ajouanna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 12:48:04 by ajouanna          #+#    #+#             */
-/*   Updated: 2016/12/05 18:10:55 by ajouanna         ###   ########.fr       */
+/*   Updated: 2016/12/07 11:20:56 by ajouanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-# define BUFF_SIZE 5000
+# define BUFF_SIZE 10
 
 typedef struct	s_sbuf
 {

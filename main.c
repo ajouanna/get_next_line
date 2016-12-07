@@ -6,7 +6,7 @@
 /*   By: ajouanna <ajouanna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 13:49:11 by ajouanna          #+#    #+#             */
-/*   Updated: 2016/12/05 17:31:15 by ajouanna         ###   ########.fr       */
+/*   Updated: 2016/12/07 11:29:15 by ajouanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	print_buffer(char *line)
 
 int		main(int ac, char *av[])
 {
-	char		*buf;
+	char		*buf = NULL;
 	int			fd;
 	int			ret;
 
@@ -53,6 +53,7 @@ int		main(int ac, char *av[])
 	while ((ret = get_next_line(fd, &buf)) == 1)
 	{
 		print_buffer(buf);
+		free(buf);
 	}
 	close(fd);
 	return (0);

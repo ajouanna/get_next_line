@@ -6,7 +6,7 @@
 /*   By: ajouanna <ajouanna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 14:04:19 by ajouanna          #+#    #+#             */
-/*   Updated: 2016/12/05 18:30:55 by ajouanna         ###   ########.fr       */
+/*   Updated: 2016/12/07 12:03:09 by ajouanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,7 @@ int			get_next_line(const int fd, char **line)
 		return (-1);
 	if ((res = join(line, sbuf)))
 		return (res);
-	while ((res = read(fd, sbuf->buf, BUFF_SIZE) > 0))
+	while ((res = read(fd, sbuf->buf, BUFF_SIZE)) > 0)
 	{
 		sbuf->buf[res] = 0;
 		if ((resjoin = join(line, sbuf)) != 0)
